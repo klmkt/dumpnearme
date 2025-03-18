@@ -10,12 +10,14 @@ public class MovementTong : MonoBehaviour
     public GameObject tongOrganik; // Referensi ke tempat sampah organik
     public GameObject tongAnorganik; // Referensi ke tempat sampah anorganik
 
-    private Transform tr;
+    private Transform trOrganik;
+    private Transform trAnorganik;
     private static TrashType currentBinType = TrashType.Organic;
 
     void Start()
     {
-        tr = GetComponent<Transform>();
+        trOrganik = tongOrganik.GetComponent<Transform>();
+        trAnorganik = tongAnorganik.GetComponent<Transform>();
 
         // Inisialisasi tong sampah berdasarkan tipe yang aktif
         SetActiveBin(currentBinType);
@@ -36,26 +38,37 @@ public class MovementTong : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Hanya gerakkan tong yang aktif
-        if (binType == currentBinType)
-        {
-            HandleMovement();
-        }
+        // Always handle movement for both bins
+        HandleMovement();
     }
 
     private void HandleMovement()
     {
+        float movement = 0f;
+
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            if (tr.position.x < 8f)
-                tr.position += Vector3.right * 0.2f;
+            if (trOrganik.position.x < 8f)
+                movement = 0.2f;
+
+            // Flip to face right
+            trOrganik.localScale = new Vector3(-0.1314079f, 0.09286255f, 0.2f);
+            trAnorganik.localScale = new Vector3(-0.1314079f, 0.09286255f, 0.2f);
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            if (tr.position.x > -8f)
-                tr.position += Vector3.left * 0.2f;
+            if (trOrganik.position.x > -8f)
+                movement = -0.2f;
+
+            // Flip to face left
+            trOrganik.localScale = new Vector3(0.1314079f, 0.09286255f, 0.2f);
+            trAnorganik.localScale = new Vector3(0.1314079f, 0.09286255f, 0.2f);
         }
+
+        // Move both bins simultaneously
+        trOrganik.position += Vector3.right * movement;
+        trAnorganik.position += Vector3.right * movement;
     }
 
     private void SwitchBin(TrashType newBinType)
