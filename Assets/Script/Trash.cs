@@ -24,6 +24,7 @@ public class Trash : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             Debug.Log("Trash touched the ground. Destroying trash.");
+            ScoreManager.Instance.HandleLostTrash(); // Handle lost trash logic
             Destroy(gameObject);
         }
     }

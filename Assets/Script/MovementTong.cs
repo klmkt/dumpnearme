@@ -10,9 +10,15 @@ public class MovementTong : MonoBehaviour
     public GameObject tongOrganik; // Referensi ke tempat sampah organik
     public GameObject tongAnorganik; // Referensi ke tempat sampah anorganik
 
+    public GameObject Tong1; // Referensi ke Tong1
+    public GameObject Tong2; // Referensi ke Tong2
+
     private Transform trOrganik;
     private Transform trAnorganik;
     private static TrashType currentBinType = TrashType.Organic;
+
+    private Color activeColor = Color.white;
+    private Color inactiveColor = Color.black;
 
     void Start()
     {
@@ -21,6 +27,7 @@ public class MovementTong : MonoBehaviour
 
         // Inisialisasi tong sampah berdasarkan tipe yang aktif
         SetActiveBin(currentBinType);
+        UpdateTongColors(currentBinType);
     }
 
     void Update()
@@ -75,6 +82,7 @@ public class MovementTong : MonoBehaviour
     {
         currentBinType = newBinType;
         SetActiveBin(newBinType);
+        UpdateTongColors(newBinType);
         Debug.Log($"Switched to {newBinType} Bin");
     }
 
@@ -84,19 +92,35 @@ public class MovementTong : MonoBehaviour
         tongAnorganik.SetActive(binType == TrashType.Anorganic);
     }
 
+    private void UpdateTongColors(TrashType binType)
+    {
+        if (Tong1 != null)
+        {
+            Tong1.GetComponent<SpriteRenderer>().color = binType == TrashType.Organic ? activeColor : inactiveColor;
+        }
+        if (Tong2 != null)
+        {
+            Tong2.GetComponent<SpriteRenderer>().color = binType == TrashType.Anorganic ? activeColor : inactiveColor;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Trash"))
         {
             Trash trash = collision.GetComponent<Trash>();
-            if (trash != null && trash.trashType == binType) // Bandingkan tipe yang sama
+            if (trash != null && trash.trashType == binType) // Correct bin
             {
                 Debug.Log("Correct trash! Accepted.");
+                ScoreManager.Instance.AddScore(1); // Add 1 point
+                ScoreManager.Instance.ResetWrongHits(); // Reset wrong hits counter
                 Destroy(collision.gameObject);
             }
-            else
+            else // Wrong bin
             {
                 Debug.Log("Wrong bin! Rejected.");
+                ScoreManager.Instance.HandleWrongHit(); // Handle wrong hit logic
+                Destroy(collision.gameObject);
             }
         }
     }
