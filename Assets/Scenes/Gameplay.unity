@@ -1760,7 +1760,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 7
 --- !u!1001 &898080419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2797,7 +2797,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentScore: 0
   highScore: 0
-  GameOverUI: {fileID: 0}
+  isGameOver: 0
+  gameOverPanel: {fileID: 0}
+  finalScoreText: {fileID: 0}
+  finalHighScoreText: {fileID: 0}
+  scoreDisplay: {fileID: 0}
+  maxWrongHits: 5
+  maxLostTrashes: 5
 --- !u!4 &1556808872
 Transform:
   m_ObjectHideFlags: 0
@@ -2826,6 +2832,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameOverMenu: {fileID: 0}
+  homeButton: {fileID: 0}
+  restartButton: {fileID: 0}
+  debugVisibility: 1
 --- !u!1001 &1617770720
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2927,7 +2936,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1643100650
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2961,7 +2970,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df1c7c4f9f8b3f4449682d3d60c73777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameOverMenu: {fileID: 0}
+  GameOverMenu: {fileID: 1643100649}
+  homeButton: {fileID: 92584418}
+  restartButton: {fileID: 761178249}
+  debugVisibility: 1
 --- !u!1 &1756221909 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7759330987241518417, guid: 2692aee0a97d43f4ca5f4f662246d5f8, type: 3}
