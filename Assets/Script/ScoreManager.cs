@@ -82,12 +82,9 @@ public class ScoreManager : MonoBehaviour
         lostPointsInARow = 0;
     }
 
-    public GameOverUI GameOverUI; // Tambahkan di Inspector
-
     private void GameOver()
     {
         Debug.Log("Game Over!");
-        GameOverUI.ShowGameOver(); // Tampilkan UI Game Over
+        // Add game over logic here (e.g., show game over screen, restart game, etc.)
     }
-
 }
