@@ -21,10 +21,11 @@ public class Trash : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (ScoreManager.Instance.isGameOver) return;
+
         if (collision.gameObject.CompareTag("Ground"))
         {
-            Debug.Log("Trash touched the ground. Destroying trash.");
-            ScoreManager.Instance.HandleLostTrash(); // Handle lost trash logic
+            ScoreManager.Instance.HandleLostTrash();
             Destroy(gameObject);
         }
     }

@@ -106,21 +106,23 @@ public class MovementTong : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (ScoreManager.Instance.isGameOver) return;
+
         if (collision.CompareTag("Trash"))
         {
             Trash trash = collision.GetComponent<Trash>();
-            if (trash != null && trash.trashType == binType) // Correct bin
+            if (trash != null)
             {
-                Debug.Log("Correct trash! Accepted.");
-                ScoreManager.Instance.AddScore(1); // Add 1 point
-                ScoreManager.Instance.ResetWrongHits(); // Reset wrong hits counter
-                Destroy(collision.gameObject);
-            }
-            else // Wrong bin
-            {
-                Debug.Log("Wrong bin! Rejected.");
-                ScoreManager.Instance.HandleWrongHit(); // Handle wrong hit logic
-                Destroy(collision.gameObject);
+                if (trash.trashType == binType) // Correct bin
+                {
+                    ScoreManager.Instance.AddScore(1);
+                    Destroy(collision.gameObject);
+                }
+                else // Wrong bin
+                {
+                    ScoreManager.Instance.HandleWrongHit();
+                    Destroy(collision.gameObject);
+                }
             }
         }
     }

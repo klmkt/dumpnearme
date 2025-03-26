@@ -5,8 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    AudioManager audioManager;
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     public void PlayGame()
     {
+        audioManager.PlaySFX(audioManager.button);
         // Reset skor sebelum memulai game (jika ScoreManager digunakan)
         if (ScoreManager.Instance != null)
         {
@@ -19,12 +27,14 @@ public class MainMenu : MonoBehaviour
 
     public void OpenCredits()
     {
+        audioManager.PlaySFX(audioManager.button);
         // Load scene Credit (urutan 2)
         SceneManager.LoadScene(2);
     }
 
     public void QuitGame()
     {
+        audioManager.PlaySFX(audioManager.button);
         // Keluar dari game (tidak berfungsi di editor)
         Application.Quit();
 
