@@ -7,14 +7,19 @@ public class Generator : MonoBehaviour
 {
     float timer = 1;
     public List<GameObject> trashPrefabs = new List<GameObject>();
+    private GameTImer gameTimer;
 
     void Start()
     {
-        timer = 0.7f;
+        gameTimer = FindObjectOfType<GameTImer>();
+        timer = GetCurrentSpawnInterval();
     }
 
     void Update()
     {
+        // Stop spawning if game over
+        if (ScoreManager.Instance != null && ScoreManager.Instance.isGameOver) return;
+
         if (timer > 0)
         {
             timer -= Time.deltaTime;
@@ -22,8 +27,23 @@ public class Generator : MonoBehaviour
         else
         {
             SpawnTrash();
-            timer = 0.7f;
+            timer = GetCurrentSpawnInterval();
         }
+    }
+
+    float GetCurrentSpawnInterval()
+    {
+        if (gameTimer == null) return 2.0f; // Default if timer is not found
+
+        // Calculate elapsed time (assuming a 90 seconds total duration)
+        float elapsed = 90f - gameTimer.timeRemaining;
+
+        if (elapsed <= 15f) return 2.0f;
+        else if (elapsed <= 30f) return 1.5f;
+        else if (elapsed <= 45f) return 1.1f;
+        else if (elapsed <= 60f) return 0.8f;
+        else if (elapsed <= 75f) return 0.6f;
+        else return 0.5f;
     }
 
     void SpawnTrash()
@@ -57,7 +77,7 @@ public class Generator : MonoBehaviour
             rb = trash.AddComponent<Rigidbody2D>();
         }
         rb.bodyType = RigidbodyType2D.Dynamic;
-        rb.gravityScale = 1;
+        rb.gravityScale = 0; // Gravitasi dinonaktifkan agar kecepatan jatuh murni dari Trash.cs
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         Collider2D collider = trash.GetComponent<Collider2D>();

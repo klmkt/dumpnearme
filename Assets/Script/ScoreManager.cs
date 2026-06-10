@@ -79,10 +79,10 @@ public class ScoreManager : MonoBehaviour
 
         SubtractScore(1); // Deduct point for wrong hit
 
-        if (wrongHitsInARow >= maxWrongHits)
-        {
-            GameOver("Too many wrong bin hits!");
-        }
+        // if (wrongHitsInARow >= maxWrongHits)
+        // {
+        //     GameOver("Too many wrong bin hits!");
+        // }
     }
 
     public void HandleLostTrash()
@@ -96,10 +96,10 @@ public class ScoreManager : MonoBehaviour
 
         SubtractScore(1); // Deduct point for lost trash
 
-        if (lostTrashesInARow >= maxLostTrashes)
-        {
-            GameOver("Too many trashes missed!");
-        }
+        // if (lostTrashesInARow >= maxLostTrashes)
+        // {
+        //     GameOver("Too many trashes missed!");
+        // }
     }
 
     private void UpdateScoreUI()

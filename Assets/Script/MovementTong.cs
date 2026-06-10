@@ -113,7 +113,7 @@ public class MovementTong : MonoBehaviour
             Trash trash = collision.GetComponent<Trash>();
             if (trash != null)
             {
-                if (trash.trashType == binType) // Correct bin
+                if (trash.trashType == binType || trash.gameObject.name.Contains("plasticbagAnorganic")) // Correct bin or special object
                 {
                     ScoreManager.Instance.AddScore(1);
                     Destroy(collision.gameObject);

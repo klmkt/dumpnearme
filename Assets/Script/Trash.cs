@@ -8,15 +8,20 @@ public class Trash : MonoBehaviour
     public TrashType trashType; // Gunakan Enum.TrashType dari Enum.cs
 
     private Transform tr;
+    private float fallSpeed = 0.12f;
 
     void Start()
     {
         tr = GetComponent<Transform>();
+        if (gameObject.name.Contains("plasticbagAnorganic"))
+        {
+            fallSpeed = 0.28f; // Jatuh lebih cepat secara signifikan (lebih dari 2x lipat)
+        }
     }
 
     void FixedUpdate()
     {
-        tr.position -= new Vector3(0f, 0.12f, 0f);
+        tr.position -= new Vector3(0f, fallSpeed, 0f);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
