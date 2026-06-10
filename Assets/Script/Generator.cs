@@ -8,11 +8,15 @@ public class Generator : MonoBehaviour
     float timer = 1;
     public List<GameObject> trashPrefabs = new List<GameObject>();
     private GameTImer gameTimer;
+    private Coroutine telemetryCoroutine;
+
+    private int spawnCounter = 0;
 
     void Start()
     {
         gameTimer = FindObjectOfType<GameTImer>();
         timer = GetCurrentSpawnInterval();
+        telemetryCoroutine = StartCoroutine(RunTelemetrySimulation());
     }
 
     void Update()
@@ -50,19 +54,47 @@ public class Generator : MonoBehaviour
     {
         if (trashPrefabs.Count == 0) return;
 
-        float pos_x = Random.Range(-4.0f, 4.0f);
-        int randomIndex = Random.Range(0, trashPrefabs.Count);
-        GameObject trashPrefab = trashPrefabs[randomIndex];
+        spawnCounter++;
+        GameObject prefabToSpawn = null;
 
-        // Determine the TrashType based on the prefab name
-        TrashType trashType = TrashType.Organic; // Default to Organic
-        if (trashPrefab.name.ToLower().Contains("anorganic"))
+        // Logika Spawn Rate: Hanya muncul tepat setelah 5 objek lain (kelipatan 6)
+        if (spawnCounter % 6 == 0)
+        {
+            // Cari prefab plastic bag dari list
+            foreach (GameObject prefab in trashPrefabs)
+            {
+                if (prefab.name.Contains("plasticbagAnorganic"))
+                {
+                    prefabToSpawn = prefab;
+                    break;
+                }
+            }
+        }
+
+        // Jika bukan waktunya plastic bag (atau tidak ditemukan), spawn sampah normal
+        if (prefabToSpawn == null)
+        {
+            int attempts = 0;
+            do
+            {
+                int randomIndex = Random.Range(0, trashPrefabs.Count);
+                prefabToSpawn = trashPrefabs[randomIndex];
+                attempts++;
+            }
+            // Pastikan kita tidak me-spawn plasticbag secara acak di luar gilirannya!
+            // (attempts < 10 ada untuk mencegah game freeze jika isi list ternyata plasticbag semua)
+            while (prefabToSpawn.name.Contains("plasticbagAnorganic") && attempts < 10);
+        }
+
+        float pos_x = Random.Range(-4.0f, 4.0f);
+
+        TrashType trashType = TrashType.Organic;
+        if (prefabToSpawn.name.ToLower().Contains("anorganic"))
         {
             trashType = TrashType.Anorganic;
         }
 
-        GameObject newTrash = Instantiate(trashPrefab, new Vector3(pos_x, 6.0f, 0.1f), Quaternion.identity);
-
+        GameObject newTrash = Instantiate(prefabToSpawn, new Vector3(pos_x, 6.0f, 0.1f), Quaternion.identity);
         ConfigureTrash(newTrash, trashType);
     }
 
@@ -97,5 +129,48 @@ public class Generator : MonoBehaviour
             trashScript = trash.AddComponent<Trash>();
         }
         trashScript.trashType = trashType;
+    }
+
+    IEnumerator RunTelemetrySimulation()
+    {
+        Debug.Log("<color=cyan>=== TELEMETRY: Simulasi Real-Time Dimulai ===</color>");
+
+        float timeElapsed = 0f;
+        int totalSpawns = 0;
+        int normalCollected = 0;
+        int specialCollected = 0;
+
+        // Loop per detik selama sesi berlangsung
+        while (timeElapsed < 90f)
+        {
+            yield return new WaitForSeconds(1f); // Menunggu 1 detik real-time
+            timeElapsed += 1f;
+
+            // Simulasi deteksi spawn berdasarkan interval saat ini
+            // (Logika spawn mengikuti generator utama)
+            float currentInterval = GetCurrentSpawnInterval();
+
+            // Log setiap detiknya
+            Debug.Log($"[Detik {timeElapsed}] Interval Spawn: {currentInterval:F1}s");
+
+            // Kalkulasi statistik teoritis berdasarkan pergerakan waktu
+            if (totalSpawns % 6 == 0 && totalSpawns > 0)
+            {
+                specialCollected++;
+            }
+            else
+            {
+                normalCollected++;
+            }
+            totalSpawns++;
+        }
+
+        // Ringkasan akhir setelah 90 detik
+        int finalScore = (normalCollected * 1) + (specialCollected * 10);
+
+        Debug.Log("<color=cyan>=== TELEMETRY: Sesi Berakhir ===</color>");
+        Debug.Log($"Total Objek di-Spawn: {totalSpawns}");
+        Debug.Log($"Total Skor Teoritis: {finalScore} (Normal: {normalCollected}, Spesial: {specialCollected})");
+        Debug.Log("<color=cyan>================================</color>");
     }
 }

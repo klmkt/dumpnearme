@@ -106,19 +106,31 @@ public class MovementTong : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (ScoreManager.Instance.isGameOver) return;
+        if (ScoreManager.Instance != null && ScoreManager.Instance.isGameOver) return;
 
         if (collision.CompareTag("Trash"))
         {
             Trash trash = collision.GetComponent<Trash>();
             if (trash != null)
             {
-                if (trash.trashType == binType || trash.gameObject.name.Contains("plasticbagAnorganic")) // Correct bin or special object
+                // 1. Ambil nama objek dan ubah semuanya menjadi huruf kecil (lowercase)
+                string trashName = trash.gameObject.name.ToLower();
+
+                // 2. Deteksi cukup menggunakan kata "plastic" agar pasti tertangkap
+                bool isUniversalObj = trashName.Contains("plastic");
+
+                if (trash.trashType == binType || isUniversalObj)
                 {
-                    ScoreManager.Instance.AddScore(1);
+                    // 3. Menentukan nilai skor secara dinamis
+                    int scoreToAdd = isUniversalObj ? 10 : 1;
+
+                    // 4. Memunculkan log di Console untuk memastikan sistem membaca objek dengan benar
+                    Debug.Log($"Menangkap Objek: {trashName} | Apakah Spesial? {isUniversalObj} | Skor Ditambahkan: {scoreToAdd}");
+
+                    ScoreManager.Instance.AddScore(scoreToAdd);
                     Destroy(collision.gameObject);
                 }
-                else // Wrong bin
+                else
                 {
                     ScoreManager.Instance.HandleWrongHit();
                     Destroy(collision.gameObject);

@@ -15,7 +15,11 @@ public class Trash : MonoBehaviour
         tr = GetComponent<Transform>();
         if (gameObject.name.Contains("plasticbagAnorganic"))
         {
-            fallSpeed = 0.28f; // Jatuh lebih cepat secara signifikan (lebih dari 2x lipat)
+            fallSpeed = 0.30f; // Dipercepat signifikan agar menjadi "Pacing Spike"
+        }
+        else
+        {
+            fallSpeed = 0.12f; // Kecepatan normal
         }
     }
 
@@ -26,11 +30,14 @@ public class Trash : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (ScoreManager.Instance.isGameOver) return;
+        if (ScoreManager.Instance != null && ScoreManager.Instance.isGameOver) return;
 
         if (collision.gameObject.CompareTag("Ground"))
         {
-            ScoreManager.Instance.HandleLostTrash();
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.HandleLostTrash();
+            }
             Destroy(gameObject);
         }
     }
